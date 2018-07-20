@@ -1,0 +1,16 @@
+to get the app started on port 3000 from local host: const port = process.env.PORT || 3000;
+and use app.listen to start the app on the port number.
+
+also used: app.use(express.static(publicPath));
+which lets the app then be run from chrome with the index.html file stored in the publicPath
+variable.
+
+Configured the package.json file so the app can be run from heroku using the following
+start script:
+"scripts": {
+  "start": "node server/server.js"
+
+  and then specifying the node version used for thie app:
+  "engines": {
+    "node": "9.11.2"
+  } 
