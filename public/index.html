@@ -9,19 +9,6 @@
 
 <!-- script socket library for client connection-->
 <script src = "/socket.io/socket.io.js"></script>
-<script>
-//initiate request from client to server and keep the conn open
-  var socket = io();
-
-  socket.on("connect", () => {
-    //logs msg in browser console
-    console.log("Connected to server");
-  });
-
-  socket.on("disconnect", () => {
-    console.log("Disconnected from server");
-  });
-
-</script>
+<script src = "/js/index.js"></script>
 </body>
 </html>

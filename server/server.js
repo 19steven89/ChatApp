@@ -19,6 +19,19 @@ app.use(express.static(publicPath));
 io.on("connection", (socket) => {
   console.log("New user connected");
 
+  //handle newEmail socket with example Object data
+  socket.emit("newMessage", {
+    from: "john",
+    text: "Yea that's cool",
+    createdAt: 123123
+    //the createdAt attribute is only handled at the server side to prevent the
+    //time from being spoofed by the client
+  });
+
+  socket.on("createMessage", (msg) => {
+    console.log("Msg Created", msg);
+  });
+
   socket.on("disconnect", () => {
     console.log("client disconnected");
   });
