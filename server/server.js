@@ -15,28 +15,26 @@ const publicPath = path.join(__dirname, "../public");
 //run the app on PORT 3000 from the terminal and run fron chrome using localhost:3000
 app.use(express.static(publicPath));
 
-//used tp register an event listener. In this case a connection event to the server
+//used to register an event listener. In this case a connection event to the server
 io.on("connection", (socket) => {
-  console.log("New user connected");
+    console.log("New user connected");
 
-  //handle newEmail socket with example Object data
-  socket.emit("newMessage", {
-    from: "john",
-    text: "Yea that's cool",
-    createdAt: 123123
-    //the createdAt attribute is only handled at the server side to prevent the
-    //time from being spoofed by the client
-  });
+    socket.on("createMessage", (msg) => {
+        console.log("Msg Created", msg);
+        //io.emit emits an event to every single connection, i.e. if a user creates a msg in the chat
+        //we want to display that msg to all active users
+        io.emit("newMessage", {
+            from: msg.from,
+            text: msg.text,
+            createdAt: new Date().getTime()
+        });
+    });
 
-  socket.on("createMessage", (msg) => {
-    console.log("Msg Created", msg);
-  });
-
-  socket.on("disconnect", () => {
-    console.log("client disconnected");
-  });
+    socket.on("disconnect", () => {
+        console.log("client disconnected");
+    });
 });
 
 server.listen(port, () => {
-  console.log(`Started on Port ${port}`);
+    console.log(`Started on Port ${port}`);
 });
