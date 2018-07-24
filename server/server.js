@@ -25,11 +25,14 @@ io.on("connection", (socket) => {
 
     socket.broadcast.emit("newMessage", generateMessage("Admin", "New User Joined"));
 
-    socket.on("createMessage", (msg) => {
+    socket.on("createMessage", (msg, callback) => {
         console.log("Msg Created", msg);
         //io.emit emits an event to every single connection, i.e. if a user creates a msg in the chat
         //we want to display that msg to all active users
         io.emit("newMessage", generateMessage(msg.from, msg.text));
+
+        //this callback will call the console.log("Got It!"); callback argument from index.js
+        callback("This is from the server!");
 
         // the difference from the code above is that when a user enters a new message
         // to the chat it only gets broadcast to certain members i.e. all members except the member that sent the msg
