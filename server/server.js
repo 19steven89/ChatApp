@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const socketIO = require("socket.io");
 const http = require("http");
+const { generateMessage } = require("./utils/message");
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -19,27 +20,16 @@ app.use(express.static(publicPath));
 io.on("connection", (socket) => {
     console.log("New user connected");
 
-    socket.emit("newMessage", {
-        from: "Admin",
-        text: "Welcome to the Chat App",
-        createdAt: new Date().getTime()
-    });
+    //call function from message.js passing in the from and text arguments
+    socket.emit("newMessage", generateMessage("Admin", "Welcome to the Chat App"));
 
-    socket.broadcast.emit("newMessage", {
-        from: "Admin",
-        text: "New User Joined",
-        createdAt: new Date().getTime()
-    });
+    socket.broadcast.emit("newMessage", generateMessage("Admin", "New User Joined"));
 
     socket.on("createMessage", (msg) => {
         console.log("Msg Created", msg);
         //io.emit emits an event to every single connection, i.e. if a user creates a msg in the chat
         //we want to display that msg to all active users
-        io.emit("newMessage", {
-            from: msg.from,
-            text: msg.text,
-            createdAt: new Date().getTime()
-        });
+        io.emit("newMessage", generateMessage(msg.from, msg.text));
 
         // the difference from the code above is that when a user enters a new message
         // to the chat it only gets broadcast to certain members i.e. all members except the member that sent the msg
