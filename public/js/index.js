@@ -15,12 +15,24 @@ socket.on("disconnect", function() {
 // done here
 socket.on("newMessage", function(message) {
     console.log("New Message", message);
+
+    var li = jQuery("<li></li>");
+    li.text(`${message.from}: ${message.text}`);
+
+    jQuery("#messages").append(li);
 });
 
-socket.emit("createMessage", {
-    from: "Frank",
-    text: "Hi"
-}, function(data) {
-    console.log("Got It!");
-    console.log(data);
+//event name is submit and the function will be fired when the user triggers the event to submit the form
+jQuery("#messageForm").on("submit", function(e) {
+    //prevent the default behaviour for the event, in this instance it is the page refreshing when a form is submitted 
+    e.preventDefault();
+
+    //set up form handler to the server when submitting a message
+    socket.emit("createMessage", {
+        from: "User",
+        //get the message input from the form 
+        text: jQuery("[name=message]").val()
+    }, function() {
+
+    });
 });
