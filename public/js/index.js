@@ -36,3 +36,20 @@ jQuery("#messageForm").on("submit", function(e) {
 
     });
 });
+
+var locationButton = jQuery("#sendLocation");
+locationButton.on("click", function() {
+    if (!navigator.geolocation) {
+        return alert("Geolocation not supported on this browser!");
+    }
+
+    //get the users coords if successful and emit lat and long pos of user using socket.emit
+    navigator.geolocation.getCurrentPosition(function(position) {
+        socket.emit("createLocationMessage", {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+        });
+    }, function() {
+        alert("Unable to fetch location!")
+    });
+});

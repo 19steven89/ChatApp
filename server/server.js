@@ -33,14 +33,11 @@ io.on("connection", (socket) => {
 
         //this callback will call the console.log("Got It!"); callback argument from index.js
         callback("This is from the server!");
+    });
 
-        // the difference from the code above is that when a user enters a new message
-        // to the chat it only gets broadcast to certain members i.e. all members except the member that sent the msg
-        // socket.broadcast.emit("newMessage", {
-        //     from: msg.from,
-        //     text: msg.text,
-        //     createdAt: new Date().getTime()
-        // })
+    //when user location sent from client side, output the user location
+    socket.on("createLocationMessage", (coords) => {
+        io.emit("newMessage", generateMessage("Admin", `${coords.latitude}, ${coords.longitude}`))
     });
 
     socket.on("disconnect", () => {
