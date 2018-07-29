@@ -2,7 +2,7 @@ const express = require("express");
 const path = require("path");
 const socketIO = require("socket.io");
 const http = require("http");
-const { generateMessage } = require("./utils/message");
+const { generateMessage, generateLocationMessage } = require("./utils/message");
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -37,7 +37,8 @@ io.on("connection", (socket) => {
 
     //when user location sent from client side, output the user location
     socket.on("createLocationMessage", (coords) => {
-        io.emit("newMessage", generateMessage("Admin", `${coords.latitude}, ${coords.longitude}`))
+        //call method from message.js, passing in the lat and long values to return the user location
+        io.emit("newLocationMessage", generateLocationMessage("Admin", coords.latitude, coords.longitude));
     });
 
     socket.on("disconnect", () => {

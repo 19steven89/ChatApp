@@ -22,6 +22,16 @@ socket.on("newMessage", function(message) {
     jQuery("#messages").append(li);
 });
 
+socket.on("newLocationMessage", function(message) {
+    var li = jQuery("<li></li>");
+    var a = jQuery("<a target = \"_blank\">My Current Location</a>");
+
+    li.text(`${message.from}: `);
+    a.attr("href", message.url);
+    li.append(a);
+    jQuery("#messages").append(li);
+});
+
 //event name is submit and the function will be fired when the user triggers the event to submit the form
 jQuery("#messageForm").on("submit", function(e) {
     //prevent the default behaviour for the event, in this instance it is the page refreshing when a form is submitted 
