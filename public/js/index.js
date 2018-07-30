@@ -37,13 +37,16 @@ jQuery("#messageForm").on("submit", function(e) {
     //prevent the default behaviour for the event, in this instance it is the page refreshing when a form is submitted 
     e.preventDefault();
 
+    var msgTextBox = jQuery("[name=message]");
+
     //set up form handler to the server when submitting a message
     socket.emit("createMessage", {
         from: "User",
         //get the message input from the form 
-        text: jQuery("[name=message]").val()
+        text: msgTextBox.val()
     }, function() {
-
+        //clear the message text field when the message is sent
+        msgTextBox.val("");
     });
 });
 
@@ -53,13 +56,19 @@ locationButton.on("click", function() {
         return alert("Geolocation not supported on this browser!");
     }
 
+    //disable the button while the location is being processed
+    locationButton.attr("disabled", "disabled").text("Sending Location...");
+
     //get the users coords if successful and emit lat and long pos of user using socket.emit
     navigator.geolocation.getCurrentPosition(function(position) {
+        locationButton.removeAttr("disabled").text("Send Location");
         socket.emit("createLocationMessage", {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude
         });
     }, function() {
+        //enable the button after the location is processed again
+        locationButton.removeAttr("disabled").text("Send Location");
         alert("Unable to fetch location!")
     });
 });

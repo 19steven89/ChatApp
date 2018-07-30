@@ -32,7 +32,7 @@ io.on("connection", (socket) => {
         io.emit("newMessage", generateMessage(msg.from, msg.text));
 
         //this callback will call the console.log("Got It!"); callback argument from index.js
-        callback("This is from the server!");
+        callback();
     });
 
     //when user location sent from client side, output the user location
