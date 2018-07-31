@@ -21,3 +21,6 @@ https://secure-anchorage-83223.herokuapp.com/
 followed by heroku open from the terminal to open the url.
 
 added npm i moment --save This npm is used for date formatting.
+
+copied the moment.js file from the nodemodules directory, then copied the file into the libs directory
+so that it can be used in the client side
