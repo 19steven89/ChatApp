@@ -1,6 +1,27 @@
 //initiate request from client to server and keep the conn open
 var socket = io();
 
+function scrollToBottom() {
+    //this method is to automatucally scroll the user to the bottom of the chat if a 
+    //message comes in so they are able to view it without scrolling 
+    //selectors 
+    var messages = jQuery("#messages");
+    var newMsg = messages.children("li:last-child");
+
+    //heights. prop() is a jquery method that sets or returns selected values
+    var clientHeight = messages.prop("clientHeight");
+    var scrollTop = messages.prop("scrollTop");
+    var scrollHeight = messages.prop("scrollHeight");
+    var newMsgHeight = newMsg.innerHeight();
+    //takes us to previous child, i.e. if we are at the last list item we are now at the 2nd last item
+    var lastMsgHeight = newMsg.prev().innerHeight();
+
+    if (clientHeight + scrollTop + newMsgHeight >= scrollHeight) {
+        console.log("Should scroll");
+        messages.scrollTop(scrollHeight);
+    }
+}
+
 socket.on("connect", function() {
     //logs msg in browser console
     console.log("Connected to server");
@@ -24,6 +45,7 @@ socket.on("newMessage", function(message) {
     });
 
     jQuery("#messages").append(html);
+    scrollToBottom();
 });
 
 socket.on("newLocationMessage", function(message) {
@@ -36,6 +58,7 @@ socket.on("newLocationMessage", function(message) {
     });
 
     jQuery("#messages").append(html);
+    scrollToBottom();
 });
 
 //event name is submit and the function will be fired when the user triggers the event to submit the form
