@@ -14,25 +14,28 @@ socket.on("disconnect", function() {
 //this will listen to data emitted from the server and handle it on the client side, which is
 // done here
 socket.on("newMessage", function(message) {
-    console.log("New Message", message);
-
     var formattedtime = moment(message.createdAt).format("h:mm a")
+    var template = jQuery("#messageTemplate").html();
+    var html = Mustache.render(template, {
+        //render the users message so that it gets added to the chat
+        text: message.text,
+        from: message.from,
+        createdAt: formattedtime
+    });
 
-    var li = jQuery("<li></li>");
-    li.text(`${message.from} ${formattedtime}: ${message.text}`);
-
-    jQuery("#messages").append(li);
+    jQuery("#messages").append(html);
 });
 
 socket.on("newLocationMessage", function(message) {
-    var li = jQuery("<li></li>");
-    var a = jQuery("<a target = \"_blank\">My Current Location</a>");
     var formattedtime = moment(message.createdAt).format("h:mm a")
+    var template = jQuery("#locationMessageTemplate").html();
+    var html = Mustache.render(template, {
+        from: message.from,
+        url: message.url,
+        createdAt: formattedtime
+    });
 
-    li.text(`${message.from} ${formattedtime}: `);
-    a.attr("href", message.url);
-    li.append(a);
-    jQuery("#messages").append(li);
+    jQuery("#messages").append(html);
 });
 
 //event name is submit and the function will be fired when the user triggers the event to submit the form
