@@ -21,16 +21,21 @@ app.use(express.static(publicPath));
 io.on("connection", (socket) => {
     console.log("New user connected");
 
-    //call function from message.js passing in the from and text arguments
-    socket.emit("newMessage", generateMessage("Admin", "Welcome to the Chat App"));
-
-    socket.broadcast.emit("newMessage", generateMessage("Admin", "New User Joined"));
-
     //set up event listener for connecting to chat room, set up in chat.js
     socket.on("join", (params, callback) => {
         if (!isRealString(params.name) || !isRealString(params.room)) {
             callback("Name and room name are required");
         }
+
+        //used to add users to a specific rooms
+        socket.join(params.room);
+
+
+        //call function from message.js passing in the from and text arguments
+        socket.emit("newMessage", generateMessage("Admin", "Welcome to the Chat App"));
+
+        //sneds message to every user connected to the chat room except the person that  has joined
+        socket.broadcast.to(params.room).emit("newMessage", generateMessage("Admin", `${params.name} has joined`));
         callback();
     });
 
