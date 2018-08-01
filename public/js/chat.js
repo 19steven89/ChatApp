@@ -25,6 +25,20 @@ function scrollToBottom() {
 socket.on("connect", function() {
     //logs msg in browser console
     console.log("Connected to server");
+
+    //set up code for joining specific chat rooms
+    var params = jQuery.deparam(window.location.search);
+    socket.emit("join", params, function(err) {
+        if (err) {
+            alert(err);
+            //is the name or room is not correct redirect the user back to the home page, handled in callback function in server.js
+            window.location.href = "/";
+        } else {
+            console.log("No Error");
+
+        }
+    });
+
 });
 
 socket.on("disconnect", function() {
