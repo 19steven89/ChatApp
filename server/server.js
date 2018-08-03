@@ -34,6 +34,7 @@ io.on("connection", (socket) => {
         users.removeUser(socket.id);
         users.addUser(socket.id, params.name, params.room);
 
+        //update the user list. i.e the active users currently within a specific chat room
         io.to(params.room).emit("updateUserList", users.getUserList(params.room))
 
         //call function from message.js passing in the from and text arguments
@@ -45,10 +46,14 @@ io.on("connection", (socket) => {
     });
 
     socket.on("createMessage", (msg, callback) => {
-        console.log("Msg Created", msg);
-        //io.emit emits an event to every single connection, i.e. if a user creates a msg in the chat
-        //we want to display that msg to all active users
-        io.emit("newMessage", generateMessage(msg.from, msg.text));
+        var user = users.getUser(socket.id);
+
+        //if user exists
+        if (user && isRealString(msg.text)) {
+            //io.emit emits an event to every single connection, i.e. if a user creates a msg in the chat
+            //we want to display that msg to all active users
+            io.to(user.room).emit("newMessage", generateMessage(user.name, msg.text));
+        }
 
         //this callback will call the console.log("Got It!"); callback argument from index.js
         callback();
@@ -56,8 +61,12 @@ io.on("connection", (socket) => {
 
     //when user location sent from client side, output the user location
     socket.on("createLocationMessage", (coords) => {
-        //call method from message.js, passing in the lat and long values to return the user location
-        io.emit("newLocationMessage", generateLocationMessage("Admin", coords.latitude, coords.longitude));
+        var user = users.getUser(socket.id);
+
+        if (user) {
+            //call method from message.js, passing in the lat and long values to return the user location
+            io.to(user.room).emit("newLocationMessage", generateLocationMessage(user.name, coords.latitude, coords.longitude));
+        }
     });
 
     socket.on("disconnect", () => {

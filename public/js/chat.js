@@ -99,7 +99,6 @@ jQuery("#messageForm").on("submit", function(e) {
 
     //set up form handler to the server when submitting a message
     socket.emit("createMessage", {
-        from: "User",
         //get the message input from the form 
         text: msgTextBox.val()
     }, function() {
