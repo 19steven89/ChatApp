@@ -4,12 +4,14 @@ const socketIO = require("socket.io");
 const http = require("http");
 const { generateMessage, generateLocationMessage } = require("./utils/message");
 
-const { isRealString } = require("./utils/validation.js")
+const { isRealString } = require("./utils/validation.js");
+const { Users } = require("./utils/users.js");
 const port = process.env.PORT || 3000;
 const app = express();
 const server = http.createServer(app);
 //io used to communicate with sockerIO between server and client using the http server variable
 var io = socketIO(server);
+var users = new Users();
 
 const publicPath = path.join(__dirname, "../public");
 
@@ -29,7 +31,10 @@ io.on("connection", (socket) => {
 
         //used to add users to a specific rooms
         socket.join(params.room);
+        users.removeUser(socket.id);
+        users.addUser(socket.id, params.name, params.room);
 
+        io.to(params.room).emit("updateUserList", users.getUserList(params.room))
 
         //call function from message.js passing in the from and text arguments
         socket.emit("newMessage", generateMessage("Admin", "Welcome to the Chat App"));
@@ -57,6 +62,13 @@ io.on("connection", (socket) => {
 
     socket.on("disconnect", () => {
         console.log("client disconnected");
+
+        var user = users.removeUser(socket.id);
+        if (user) {
+            //update the user list for the chat room when a user leaves the room
+            io.to(user.room).emit("updateUserList", users.getUserList(user.room));
+            io.to(user.room).emit("newMessage", generateMessage("Admin", `${user.name} has left`));
+        }
     });
 });
 
